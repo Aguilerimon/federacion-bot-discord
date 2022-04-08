@@ -56,7 +56,7 @@ class albion(commands.Cog):
             if guildName == 'La Federacion Y':
                 embed.add_field(name='NamePlayer', value=playerName, inline=True)
                 embed.add_field(name='GuildName', value=guildName, inline=True)
-                embed.add_field(name='Role', value=role, inline=True)
+                embed.add_field(name='Rol', value=role, inline=True)
 
                 try:
                     await ctx.author.edit(nick=player_name)
