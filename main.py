@@ -20,7 +20,7 @@ async def on_ready():
 
 async def statuschange():
     while True:
-        await bot.change_presence(activity=discord.Game(name='Warframe | v1.1'))
+        await bot.change_presence(activity=discord.Game(name='!ayuda'))
         # await asyncio.sleep(5)
         # await bot.change_presence(activity=discord.Game(name='happy ayudita'))
         # await asyncio.sleep(5)
