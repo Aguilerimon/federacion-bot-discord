@@ -50,7 +50,7 @@ class albion(commands.Cog):
         events = r.json()
         playerName = events['players'][0]['Name']
         guildName = events['players'][0]['GuildName']
-        role = discord.utils.get(ctx.guild.roles, name="Miembros")
+        role = discord.utils.get(ctx.guild.roles, name="Miembro")
 
         if player_name == playerName:
             if guildName == 'La Federacion Y':
