@@ -29,10 +29,9 @@ async def statuschange():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        embed = discord.Embed(title="¡Error! ¡HappyBot esta triste!", color=0xfc051c)
-        embed.add_field(name="Error en la Matrix", value="**Te equivocaste de comando... Idiota!.**",
+        embed = discord.Embed(title="Error General", color=0xfc051c)
+        embed.add_field(name="", value="**Te equivocaste de comando.**",
                         inline=False)
-        embed.set_image(url='https://i.pinimg.com/originals/4f/b4/04/4fb4040f32a0686a41ace938165bfe5a.gif')
         await ctx.send(embed=embed)
 
 
