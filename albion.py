@@ -1,9 +1,11 @@
 import discord
 import requests
+import time
 from discord.ext import commands
 from numpy import array
 
 TValue = array([1, 2, 2, 3, 4, 5, 5])
+ltime = time.asctime(time.localtime())
 
 mineralneed = 0
 beforeling = 0
@@ -41,34 +43,64 @@ class albion(commands.Cog):
     @commands.command(name='register')
     async def register(self, ctx, player_name):
         embed = discord.Embed(
-            title='Registro de usuario',
+            title='Registro de usuario exitoso',
             description='',
-            colour=discord.Colour.blue()
+            colour=discord.Colour.green()
         )
 
-        r = requests.get(f'https://gameinfo.albiononline.com/api/gameinfo/search?q={player_name}')
-        events = r.json()
-        playerName = events['players'][0]['Name']
-        guildName = events['players'][0]['GuildName']
-        role = discord.utils.get(ctx.guild.roles, name="Miembro")
+        embedW = discord.Embed(
+            title='Proceso de búsqueda',
+            description='',
+            colour=discord.Colour.gold()
+        )
+
+        embedW.add_field(name='**Jugador**', value=player_name, inline=True)
+        embedW.add_field(name='**Tiempo estimado**', value='5 segundos', inline=True)
+
+        await ctx.send(embed=embedW)
+
+        try:
+            r = requests.get(f'https://gameinfo.albiononline.com/api/gameinfo/search?q={player_name}')
+            events = r.json()
+            playerName = events['players'][0]['Name']
+            guildName = events['players'][0]['GuildName']
+        except IndexError:
+            playerName = 'null'
+            guildName = 'null'
+
+        rol = discord.utils.get(ctx.guild.roles, name="Miembro")
+
+        print(f'[INFO {ltime}]: Jugador encontrado: {playerName}')
+        print(f'[INFO {ltime}]: Gremio: {guildName}')
 
         if player_name == playerName:
             if guildName == 'La Federacion Y':
-                embed.add_field(name='NamePlayer', value=playerName, inline=True)
-                embed.add_field(name='GuildName', value=guildName, inline=True)
-                embed.add_field(name='Rol', value=role, inline=True)
+                print(f'[INFO {ltime}]: Jugador: {playerName} pertenece al gremio requerido')
+
+                embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Yes_Check_Circle"
+                                        ".svg/1200px-Yes_Check_Circle.svg.png")
+                embed.add_field(name='**Jugador**', value=playerName, inline=True)
+                embed.add_field(name='**Gremio**', value=guildName, inline=True)
+                embed.add_field(name='**Rol**', value=rol, inline=True)
 
                 try:
                     await ctx.author.edit(nick=player_name)
-                    await ctx.author.add_roles(role)
+                    await ctx.author.add_roles(rol)
+                    print(f'[INFO {ltime}]: Rol y nick actualizados')
                 except discord.errors.Forbidden:
-                    print("ERROR - PERMISOS DENEGADOS")
+                    print(f'[INFO {ltime}]: Permiso denegado')
                 else:
                     await ctx.author.send("**INFO:** Bienvenido a La Federación Y: " + player_name)
+                    print(f'[INFO {ltime}]: Mensaje de confirmacion enviado')
                 embed.set_footer(text='Bot created by: Aguilerimon#0284')
+
+                # await waitone.delete()
                 await ctx.send(embed=embed)
             else:
-                embed = discord.Embed(title="¡Error! ¡El aspirante no pertenece a la guild!", color=0xfc051c)
+                print(f'[INFO {ltime}]: El aspirante: {playerName} no pertenece al gremio requerido')
+
+                embed = discord.Embed(title="¡El aspirante no pertenece a la guild!", color=0xfc051c)
+                embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/148/148766.png")
                 embed.add_field(name="ERROR", value="**Se ha detectado que el aspirante no ha sido "
                                                     "reclutado dentro del "
                                                     "juego. Favor "
@@ -76,13 +108,29 @@ class albion(commands.Cog):
                                                     "ingreso a la guild.**",
                                 inline=False)
                 embed.set_footer(text='Bot created by: Aguilerimon#0284')
+                # await waitone.delete()
                 await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(title="¡Error! ¡El nombre de jugador no existe!", color=0xfc051c)
+        elif playerName == 'null':
+            print(f'[INFO {ltime}]: El aspirante: {playerName} no existe')
+
+            embed = discord.Embed(title="¡El nombre de jugador no existe!", color=0xfc051c)
+            embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/148/148766.png")
             embed.add_field(name="ERROR", value="**Se ha detectado que el nombre de jugador no existe en el juego. "
                                                 "Favor de contactar con un administrador.**",
                             inline=False)
             embed.set_footer(text='Bot created by: Aguilerimon#0284')
+            # await waitone.delete()
+            await ctx.send(embed=embed)
+        else:
+            print(f'[INFO {ltime}]: El aspirante: {playerName} no existe')
+
+            embed = discord.Embed(title="¡El nombre de jugador no existe!", color=0xfc051c)
+            embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/148/148766.png")
+            embed.add_field(name="ERROR", value="**Se ha detectado que el nombre de jugador no existe en el juego. "
+                                                "Favor de contactar con un administrador.**",
+                            inline=False)
+            embed.set_footer(text='Bot created by: Aguilerimon#0284')
+            # await waitone.delete()
             await ctx.send(embed=embed)
 
     @commands.command(name='refinado')

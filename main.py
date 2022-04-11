@@ -21,16 +21,14 @@ async def on_ready():
 async def statuschange():
     while True:
         await bot.change_presence(activity=discord.Game(name='!ayuda'))
-        # await asyncio.sleep(5)
-        # await bot.change_presence(activity=discord.Game(name='happy ayudita'))
-        # await asyncio.sleep(5)
 
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         embed = discord.Embed(title="Error General", color=0xfc051c)
-        embed.add_field(name="", value="**Te equivocaste de comando.**",
+        embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/148/148766.png")
+        embed.add_field(name="Error", value="**El comando no existe.**",
                         inline=False)
         await ctx.send(embed=embed)
 
