@@ -54,6 +54,12 @@ class albion(commands.Cog):
             colour=discord.Colour.gold()
         )
 
+        embedE = discord.Embed(
+            title='Jugador Encontrado',
+            description='',
+            colour=discord.Colour.gold()
+        )
+
         embedW.add_field(name='**Jugador**', value=player_name, inline=True)
         embedW.add_field(name='**Tiempo estimado**', value='5 segundos', inline=True)
 
@@ -64,9 +70,11 @@ class albion(commands.Cog):
             events = r.json()
             playerName = events['players'][0]['Name']
             guildName = events['players'][0]['GuildName']
+            # allianceName = events['players'][0]['allianceName']
         except IndexError:
             playerName = 'null'
             guildName = 'null'
+            # allianceName = 'null'
 
         rol = discord.utils.get(ctx.guild.roles, name="Miembro")
 
@@ -75,27 +83,35 @@ class albion(commands.Cog):
 
         if player_name == playerName:
             if guildName == 'La Federacion Y':
+                embedE.add_field(name='**Jugador**', value=playerName, inline=True)
+                embedE.add_field(name='**Gremio**', value=guildName, inline=True)
+
+                await ctx.send(embed=embedE)
                 print(f'[INFO {ltime}]: Jugador: {playerName} pertenece al gremio requerido')
 
                 embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Yes_Check_Circle"
                                         ".svg/1200px-Yes_Check_Circle.svg.png")
                 embed.add_field(name='**Jugador**', value=playerName, inline=True)
                 embed.add_field(name='**Gremio**', value=guildName, inline=True)
-                embed.add_field(name='**Rol**', value=rol, inline=True)
+                # embed.add_field(name='**Alianza**', value=allianceName, inline=True)
+                embed.add_field(name='**Rol asignado**', value=rol, inline=True)
 
                 try:
                     await ctx.author.edit(nick=player_name)
                     await ctx.author.add_roles(rol)
                     print(f'[INFO {ltime}]: Rol y nick actualizados')
-                except discord.errors.Forbidden:
-                    print(f'[INFO {ltime}]: Permiso denegado')
-                else:
+
                     await ctx.author.send("**INFO:** Bienvenido a La Federación Y: " + player_name)
                     print(f'[INFO {ltime}]: Mensaje de confirmacion enviado')
-                embed.set_footer(text='Bot created by: Aguilerimon#0284')
+                    embed.set_footer(text='Bot created by: Aguilerimon#0284')
 
-                # await waitone.delete()
-                await ctx.send(embed=embed)
+                    # await waitone.delete()
+                    await ctx.send(embed=embed)
+                except discord.errors.Forbidden:
+                    print(f'[INFO {ltime}]: Permiso denegado')
+                    print(f'[INFO {ltime}]: El usuario: {ctx.author.display_name} es administrador')
+                    await ctx.send("❌ **No se tiene los permisos para editar información de un administrador.** ❌")
+
             else:
                 print(f'[INFO {ltime}]: El aspirante: {playerName} no pertenece al gremio requerido')
 
